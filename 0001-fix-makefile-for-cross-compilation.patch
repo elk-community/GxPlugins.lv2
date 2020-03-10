@@ -1,0 +1,60 @@
+diff --git a/Makefile b/Makefile
+index 24bfdd9..111d0f8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,25 +8,31 @@
+ 	INSTALL_DIR = ~/.lv2
+ 	endif
+ 
+-	# check CPU and supported optimization flags
+-	ifneq ($(shell cat /proc/cpuinfo | grep sse3 ) , )
+-		SSE_CFLAGS = -msse3 -mfpmath=sse
+-	else ifneq ($(shell cat /proc/cpuinfo | grep sse2 ) , )
+-		SSE_CFLAGS = -msse2 -mfpmath=sse
+-	else ifneq ($(shell cat /proc/cpuinfo | grep sse ) , )
+-		SSE_CFLAGS = -msse -mfpmath=sse
+-		else ifneq ($(shell cat /proc/cpuinfo | grep ARM ) , )
+-		ifneq ($(shell cat /proc/cpuinfo | grep ARMv7 ) , )
+-			ifneq ($(shell cat /proc/cpuinfo | grep vfpd32 ) , )
+-				SSE_CFLAGS = -march=armv7-a -mfpu=vfpv3 
+-			else ifneq ($(shell cat /proc/cpuinfo | grep vfpv3 ) , )
+-				SSE_CFLAGS = -march=armv7-a -mfpu=vfpv3
++	# test if we're under a cross-compiling toolchain
++	ifneq ($(CROSS_COMPILE), "")
++		ARMCPU = "YES"
++		SSE_CFLAGS =
++	else
++		# check CPU and supported optimization flags
++		ifneq ($(shell cat /proc/cpuinfo | grep sse3 ) , )
++			SSE_CFLAGS = -msse3 -mfpmath=sse
++		else ifneq ($(shell cat /proc/cpuinfo | grep sse2 ) , )
++			SSE_CFLAGS = -msse2 -mfpmath=sse
++		else ifneq ($(shell cat /proc/cpuinfo | grep sse ) , )
++			SSE_CFLAGS = -msse -mfpmath=sse
++			else ifneq ($(shell cat /proc/cpuinfo | grep ARM ) , )
++			ifneq ($(shell cat /proc/cpuinfo | grep ARMv7 ) , )
++				ifneq ($(shell cat /proc/cpuinfo | grep vfpd32 ) , )
++					SSE_CFLAGS = -march=armv7-a -mfpu=vfpv3 
++				else ifneq ($(shell cat /proc/cpuinfo | grep vfpv3 ) , )
++					SSE_CFLAGS = -march=armv7-a -mfpu=vfpv3
++				endif
++			else
++				ARMCPU = "YES"
+ 			endif
+ 		else
+-			ARMCPU = "YES"
++			SSE_CFLAGS =
+ 		endif
+-	else
+-		SSE_CFLAGS =
+ 	endif
+ 
+ 	# set bundle name
+@@ -39,6 +45,7 @@
+ 	 -fdata-sections -Wl,--gc-sections -Wl,-z,relro,-z,now $(SSE_CFLAGS)
+ 	LDFLAGS += -I. -shared -lm -Wl,-z,noexecstack 
+ 	GUI_LDFLAGS += -I./gui -shared -Wl,-z,noexecstack -lm `pkg-config --cflags --libs cairo` -L/usr/X11/lib -lX11
++
+ 	# invoke build files
+ 	OBJECTS = plugin/$(NAME).cpp 
+ 	GUI_OBJECTS = gui/$(NAME)_x11ui.c
