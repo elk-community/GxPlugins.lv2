@@ -9,15 +9,13 @@ Modified for headless plugin build for [Elk Audio OS](https://elk.audio)
 $ git submodule update --init
 ```
 
-2. Apply the patch to fix Makefiles in submodules:
+2. Source the cross-compilation SDK for the target platform:
+
 ```bash
-$ ./apply-patch
+$ source [path-to-extracted-sdk]/environment-setup-[aarch-name]-elk-linux
 ```
 
-The patch might fail for some subprojects, in that case fix manually. Hopefully it will mainstreamed in Gx repositories so it won't be needed
+1. Run build-elk.sh
 
-3. Build and install locally the .lv2 packages with:
-```bash
-$ make mod
-$ make install
-```
+All the lv2 bundles will end up in the build-elk/ folder.
+
