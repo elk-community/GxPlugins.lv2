@@ -47,6 +47,9 @@ for plugin_dir in Gx*.lv2; do
 
     # Build the plugin
     echo "  Building plugin..."
+    OPT_FLAGS="-O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad -ffast-math -fno-finite-math-only -fprefetch-loop-arrays -funroll-loops -funsafe-loop-optimizations"
+    export CFLAGS=$OPT_FLAGS
+    export CXXFLAGS=$OPT_FLAGS
     make CROSS=$CROSS_COMPILE mod
 
     # Find and move the .lv2 folder to build-elk
