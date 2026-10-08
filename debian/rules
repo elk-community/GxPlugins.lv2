@@ -21,5 +21,7 @@
 # dh_make generated override targets
 override_dh_auto_configure:
 	git submodule update --init
+override_dh_auto_install:
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/gxplugins INSTALL_DIR=/usr/lib/lv2
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym
